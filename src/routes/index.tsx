@@ -134,7 +134,7 @@ function Nav() {
     { label: "Contact", href: "#contact" },
   ];
   return (
-    <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-auto">
+    <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-auto flex items-center gap-2">
       <nav className="flex items-center gap-1 rounded-full border border-border/60 bg-background/70 px-2 py-2 backdrop-blur-xl">
         <a href="#top" className="flex items-center gap-2 px-3 py-1.5 text-sm font-mono">
           <span className="dot" /> alfa-madhu.dev
@@ -150,6 +150,7 @@ function Nav() {
           ))}
         </ul>
       </nav>
+      <ThemePicker />
     </header>
   );
 }
