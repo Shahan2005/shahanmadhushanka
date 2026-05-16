@@ -1,15 +1,76 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight, Cloud, Container, GitBranch, Github, Mail, MapPin,
   Server, Sparkles, Terminal, Workflow, Zap, Cpu, Layers,
   MessageCircle, Instagram, Linkedin, BookOpen, MessagesSquare,
-  AtSign, GraduationCap, Music2, Phone, Heart,
+  AtSign, GraduationCap, Music2, Phone, Heart, Palette, Check,
+  Rocket, Target, Code2, Package, Shield, Database, Network, Wrench,
 } from "lucide-react";
 import shahanPhoto from "@/assets/shahan.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
+
+const THEMES = [
+  { id: "dark", label: "Dark", swatch: "#0a0a1a" },
+  { id: "light", label: "White", swatch: "#fafafa" },
+  { id: "blue", label: "Blue", swatch: "#3b82f6" },
+  { id: "pink", label: "Pink", swatch: "#ec4899" },
+  { id: "purple", label: "Purple", swatch: "#a855f7" },
+  { id: "green", label: "Green", swatch: "#22c55e" },
+  { id: "red", label: "Red", swatch: "#ef4444" },
+  { id: "yellow", label: "Yellow", swatch: "#facc15" },
+] as const;
+
+function useTheme() {
+  const [theme, setTheme] = useState<string>("dark");
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? localStorage.getItem("theme") || "dark" : "dark";
+    setTheme(saved);
+  }, []);
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (theme === "dark") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+  return [theme, setTheme] as const;
+}
+
+function ThemePicker() {
+  const [theme, setTheme] = useTheme();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-2 text-xs font-mono backdrop-blur-xl transition-colors hover:bg-secondary"
+        aria-label="Choose theme"
+      >
+        <Palette className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">Theme</span>
+        <span className="h-3 w-3 rounded-full border border-border" style={{ background: THEMES.find(t => t.id === theme)?.swatch }} />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-border/60 bg-card/95 p-2 backdrop-blur-xl shadow-xl z-50">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => { setTheme(t.id); setOpen(false); }}
+              className="flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-xs transition-colors hover:bg-secondary"
+            >
+              <span className="h-4 w-4 rounded-full border border-border" style={{ background: t.swatch }} />
+              <span className="flex-1 text-left">{t.label}</span>
+              {theme === t.id && <Check className="h-3.5 w-3.5 text-primary" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const skills = [
   { name: "Docker", level: "Learning", icon: Container, color: "#2496ED" },
