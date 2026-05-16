@@ -370,18 +370,68 @@ function Index() {
         </div>
       </section>
 
-      {/* FUTURE HOPE */}
-      <section className="mt-5">
-        <div className="bento bento-glow">
-          <span className="chip" style={{ color: "#EC4899", borderColor: "#EC489955" }}><Heart className="h-3 w-3" /> Future hope</span>
+      {/* FUTURE GOAL + CLOUD ENGINEER ROADMAP */}
+      <section id="future" className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-5">
+        <div className="bento bento-glow md:col-span-6">
+          <span className="chip" style={{ color: "#EC4899", borderColor: "#EC489955" }}><Target className="h-3 w-3" /> Future goal</span>
           <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
-            From <span className="text-gradient">student</span> to <span className="text-gradient">cloud engineer</span>.
+            Becoming a <span className="text-gradient">Cloud Engineer</span>.
           </h2>
           <p className="mt-4 max-w-3xl text-muted-foreground">
-            My dream is to become a recognized DevOps & Cloud Engineer — designing resilient platforms,
-            contributing to open source, mentoring younger learners in Sri Lanka, and one day launching
-            my own cloud-native product. Every commit, every container, every pipeline is a step in that direction.
+            My long-term mission is to become a recognized <span className="text-foreground">DevOps & Cloud Engineer</span> —
+            architecting resilient, scalable platforms on AWS, automating everything with Terraform and Kubernetes,
+            contributing to open source, mentoring young learners in Sri Lanka, and one day launching my own
+            cloud-native product. Every commit, container, and pipeline is a step in that direction.
           </p>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { icon: Rocket, label: "AWS Certified" },
+              { icon: Cloud, label: "Cloud Architect" },
+              { icon: Shield, label: "DevSecOps" },
+              { icon: Heart, label: "Mentor & OSS" },
+            ].map(({ icon: Ic, label }) => (
+              <div key={label} className="rounded-2xl border border-border/60 bg-secondary/40 p-3 flex items-center gap-2">
+                <Ic className="h-4 w-4 text-primary" />
+                <span className="text-xs font-mono">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Detailed roadmap */}
+        <div className="md:col-span-6">
+          <div className="mb-4">
+            <span className="chip" style={{ color: "#22D3EE", borderColor: "#22D3EE55" }}><Workflow className="h-3 w-3" /> 07 — Roadmap</span>
+            <h3 className="mt-3 font-display text-2xl font-bold sm:text-3xl">How to become a Cloud Engineer</h3>
+            <p className="mt-2 text-sm text-muted-foreground">An 8-stage path I'm walking — from fundamentals to production-grade cloud platforms.</p>
+          </div>
+          <ol className="relative grid grid-cols-1 gap-4 md:grid-cols-2">
+            {[
+              { n: "01", icon: Terminal, title: "Computer Science & Linux fundamentals", desc: "OS basics, shell scripting, file systems, processes, systemd, package managers.", color: "#FCC624" },
+              { n: "02", icon: Network, title: "Networking & Protocols", desc: "TCP/IP, DNS, HTTP(S), load balancing, VPN, firewalls, OSI model.", color: "#3B82F6" },
+              { n: "03", icon: Code2, title: "Programming & Scripting", desc: "Python, Bash, Go basics — automating tasks and writing tooling.", color: "#22C55E" },
+              { n: "04", icon: GitBranch, title: "Git & Source Control", desc: "Branching strategies, pull requests, GitHub workflows, GitOps mindset.", color: "#F05032" },
+              { n: "05", icon: Container, title: "Containers & Orchestration", desc: "Docker, container registries, Kubernetes, Helm, service meshes.", color: "#2496ED" },
+              { n: "06", icon: Cloud, title: "Cloud Provider Mastery (AWS)", desc: "EC2, S3, IAM, VPC, RDS, Lambda, CloudFront — Solutions Architect Associate.", color: "#FF9900" },
+              { n: "07", icon: Package, title: "Infrastructure as Code", desc: "Terraform, CloudFormation, Pulumi — version-controlled infrastructure.", color: "#7C3AED" },
+              { n: "08", icon: Workflow, title: "CI/CD & Observability", desc: "GitHub Actions, Jenkins, ArgoCD, Prometheus, Grafana, ELK, distributed tracing.", color: "#F43F5E" },
+            ].map(({ n, icon: Ic, title, desc, color }) => (
+              <li key={n} className="bento group" style={{ borderColor: `${color}55` }}>
+                <div className="flex items-start gap-4">
+                  <div className="rounded-xl border p-2.5" style={{ borderColor: `${color}66`, background: `${color}15`, color }}>
+                    <Ic className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs" style={{ color }}>{n}</span>
+                    </div>
+                    <h4 className="mt-1 font-display text-base font-semibold">{title}</h4>
+                    <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
