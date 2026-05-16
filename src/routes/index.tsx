@@ -1,15 +1,76 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight, Cloud, Container, GitBranch, Github, Mail, MapPin,
   Server, Sparkles, Terminal, Workflow, Zap, Cpu, Layers,
   MessageCircle, Instagram, Linkedin, BookOpen, MessagesSquare,
-  AtSign, GraduationCap, Music2, Phone, Heart,
+  AtSign, GraduationCap, Music2, Phone, Heart, Palette, Check,
+  Rocket, Target, Code2, Package, Shield, Database, Network, Wrench,
 } from "lucide-react";
 import shahanPhoto from "@/assets/shahan.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
+
+const THEMES = [
+  { id: "dark", label: "Dark", swatch: "#0a0a1a" },
+  { id: "light", label: "White", swatch: "#fafafa" },
+  { id: "blue", label: "Blue", swatch: "#3b82f6" },
+  { id: "pink", label: "Pink", swatch: "#ec4899" },
+  { id: "purple", label: "Purple", swatch: "#a855f7" },
+  { id: "green", label: "Green", swatch: "#22c55e" },
+  { id: "red", label: "Red", swatch: "#ef4444" },
+  { id: "yellow", label: "Yellow", swatch: "#facc15" },
+] as const;
+
+function useTheme() {
+  const [theme, setTheme] = useState<string>("dark");
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? localStorage.getItem("theme") || "dark" : "dark";
+    setTheme(saved);
+  }, []);
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (theme === "dark") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+  return [theme, setTheme] as const;
+}
+
+function ThemePicker() {
+  const [theme, setTheme] = useTheme();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-2 text-xs font-mono backdrop-blur-xl transition-colors hover:bg-secondary"
+        aria-label="Choose theme"
+      >
+        <Palette className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">Theme</span>
+        <span className="h-3 w-3 rounded-full border border-border" style={{ background: THEMES.find(t => t.id === theme)?.swatch }} />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-border/60 bg-card/95 p-2 backdrop-blur-xl shadow-xl z-50">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => { setTheme(t.id); setOpen(false); }}
+              className="flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-xs transition-colors hover:bg-secondary"
+            >
+              <span className="h-4 w-4 rounded-full border border-border" style={{ background: t.swatch }} />
+              <span className="flex-1 text-left">{t.label}</span>
+              {theme === t.id && <Check className="h-3.5 w-3.5 text-primary" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const skills = [
   { name: "Docker", level: "Learning", icon: Container, color: "#2496ED" },
@@ -73,7 +134,7 @@ function Nav() {
     { label: "Contact", href: "#contact" },
   ];
   return (
-    <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-auto">
+    <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-auto flex items-center gap-2">
       <nav className="flex items-center gap-1 rounded-full border border-border/60 bg-background/70 px-2 py-2 backdrop-blur-xl">
         <a href="#top" className="flex items-center gap-2 px-3 py-1.5 text-sm font-mono">
           <span className="dot" /> alfa-madhu.dev
@@ -89,6 +150,7 @@ function Nav() {
           ))}
         </ul>
       </nav>
+      <ThemePicker />
     </header>
   );
 }
@@ -308,18 +370,68 @@ function Index() {
         </div>
       </section>
 
-      {/* FUTURE HOPE */}
-      <section className="mt-5">
-        <div className="bento bento-glow">
-          <span className="chip" style={{ color: "#EC4899", borderColor: "#EC489955" }}><Heart className="h-3 w-3" /> Future hope</span>
+      {/* FUTURE GOAL + CLOUD ENGINEER ROADMAP */}
+      <section id="future" className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-5">
+        <div className="bento bento-glow md:col-span-6">
+          <span className="chip" style={{ color: "#EC4899", borderColor: "#EC489955" }}><Target className="h-3 w-3" /> Future goal</span>
           <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
-            From <span className="text-gradient">student</span> to <span className="text-gradient">cloud engineer</span>.
+            Becoming a <span className="text-gradient">Cloud Engineer</span>.
           </h2>
           <p className="mt-4 max-w-3xl text-muted-foreground">
-            My dream is to become a recognized DevOps & Cloud Engineer — designing resilient platforms,
-            contributing to open source, mentoring younger learners in Sri Lanka, and one day launching
-            my own cloud-native product. Every commit, every container, every pipeline is a step in that direction.
+            My long-term mission is to become a recognized <span className="text-foreground">DevOps & Cloud Engineer</span> —
+            architecting resilient, scalable platforms on AWS, automating everything with Terraform and Kubernetes,
+            contributing to open source, mentoring young learners in Sri Lanka, and one day launching my own
+            cloud-native product. Every commit, container, and pipeline is a step in that direction.
           </p>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { icon: Rocket, label: "AWS Certified" },
+              { icon: Cloud, label: "Cloud Architect" },
+              { icon: Shield, label: "DevSecOps" },
+              { icon: Heart, label: "Mentor & OSS" },
+            ].map(({ icon: Ic, label }) => (
+              <div key={label} className="rounded-2xl border border-border/60 bg-secondary/40 p-3 flex items-center gap-2">
+                <Ic className="h-4 w-4 text-primary" />
+                <span className="text-xs font-mono">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Detailed roadmap */}
+        <div className="md:col-span-6">
+          <div className="mb-4">
+            <span className="chip" style={{ color: "#22D3EE", borderColor: "#22D3EE55" }}><Workflow className="h-3 w-3" /> 07 — Roadmap</span>
+            <h3 className="mt-3 font-display text-2xl font-bold sm:text-3xl">How to become a Cloud Engineer</h3>
+            <p className="mt-2 text-sm text-muted-foreground">An 8-stage path I'm walking — from fundamentals to production-grade cloud platforms.</p>
+          </div>
+          <ol className="relative grid grid-cols-1 gap-4 md:grid-cols-2">
+            {[
+              { n: "01", icon: Terminal, title: "Computer Science & Linux fundamentals", desc: "OS basics, shell scripting, file systems, processes, systemd, package managers.", color: "#FCC624" },
+              { n: "02", icon: Network, title: "Networking & Protocols", desc: "TCP/IP, DNS, HTTP(S), load balancing, VPN, firewalls, OSI model.", color: "#3B82F6" },
+              { n: "03", icon: Code2, title: "Programming & Scripting", desc: "Python, Bash, Go basics — automating tasks and writing tooling.", color: "#22C55E" },
+              { n: "04", icon: GitBranch, title: "Git & Source Control", desc: "Branching strategies, pull requests, GitHub workflows, GitOps mindset.", color: "#F05032" },
+              { n: "05", icon: Container, title: "Containers & Orchestration", desc: "Docker, container registries, Kubernetes, Helm, service meshes.", color: "#2496ED" },
+              { n: "06", icon: Cloud, title: "Cloud Provider Mastery (AWS)", desc: "EC2, S3, IAM, VPC, RDS, Lambda, CloudFront — Solutions Architect Associate.", color: "#FF9900" },
+              { n: "07", icon: Package, title: "Infrastructure as Code", desc: "Terraform, CloudFormation, Pulumi — version-controlled infrastructure.", color: "#7C3AED" },
+              { n: "08", icon: Workflow, title: "CI/CD & Observability", desc: "GitHub Actions, Jenkins, ArgoCD, Prometheus, Grafana, ELK, distributed tracing.", color: "#F43F5E" },
+            ].map(({ n, icon: Ic, title, desc, color }) => (
+              <li key={n} className="bento group" style={{ borderColor: `${color}55` }}>
+                <div className="flex items-start gap-4">
+                  <div className="rounded-xl border p-2.5" style={{ borderColor: `${color}66`, background: `${color}15`, color }}>
+                    <Ic className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs" style={{ color }}>{n}</span>
+                    </div>
+                    <h4 className="mt-1 font-display text-base font-semibold">{title}</h4>
+                    <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -360,6 +472,67 @@ function Index() {
               <ArrowUpRight className="ml-auto h-4 w-4 text-muted-foreground transition-all group-hover:rotate-45" style={{ color }} />
             </a>
           ))}
+        </div>
+      </section>
+
+      {/* TECHNOLOGIES & CREDITS */}
+      <section id="credits" className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-5">
+        <div className="bento md:col-span-3">
+          <span className="chip" style={{ color: "#A78BFA", borderColor: "#A78BFA55" }}><Wrench className="h-3 w-3" /> 08 — Technologies used</span>
+          <h3 className="mt-3 font-display text-2xl font-bold">Built with</h3>
+          <p className="mt-2 text-sm text-muted-foreground">The stack powering this portfolio.</p>
+          <ul className="mt-5 space-y-2 text-sm">
+            {[
+              { name: "React 19", desc: "UI library", url: "https://react.dev" },
+              { name: "TanStack Start + Router", desc: "Full-stack React framework & file-based routing", url: "https://tanstack.com/start" },
+              { name: "Vite 7", desc: "Build tool & dev server", url: "https://vitejs.dev" },
+              { name: "TypeScript", desc: "Type-safe JavaScript", url: "https://www.typescriptlang.org" },
+              { name: "Tailwind CSS v4", desc: "Utility-first styling", url: "https://tailwindcss.com" },
+              { name: "shadcn/ui", desc: "Accessible component primitives", url: "https://ui.shadcn.com" },
+              { name: "Radix UI", desc: "Headless UI primitives", url: "https://www.radix-ui.com" },
+            ].map((t) => (
+              <li key={t.name} className="flex items-start justify-between gap-3 rounded-xl border border-border/60 bg-secondary/30 px-3 py-2">
+                <div className="min-w-0">
+                  <a href={t.url} target="_blank" rel="noreferrer" className="font-mono text-sm hover:text-primary">{t.name}</a>
+                  <div className="text-xs text-muted-foreground">{t.desc}</div>
+                </div>
+                <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" />
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="bento md:col-span-3">
+          <span className="chip" style={{ color: "#FACC15", borderColor: "#FACC1555" }}><Heart className="h-3 w-3" /> Credits & assets</span>
+          <h3 className="mt-3 font-display text-2xl font-bold">Where things come from</h3>
+          <p className="mt-2 text-sm text-muted-foreground">Honest attribution to the projects making this possible.</p>
+          <ul className="mt-5 space-y-3 text-sm">
+            <li className="rounded-xl border border-border/60 bg-secondary/30 p-3">
+              <div className="flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 text-primary" /><span className="font-mono text-sm">Icons</span></div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                All icons by <a href="https://lucide.dev" target="_blank" rel="noreferrer" className="text-primary hover:underline">Lucide</a> — open-source ISC-licensed SVG icon set (the <code className="font-mono">lucide-react</code> package).
+              </p>
+            </li>
+            <li className="rounded-xl border border-border/60 bg-secondary/30 p-3">
+              <div className="flex items-center gap-2"><Music2 className="h-3.5 w-3.5" style={{ color: "#1DB954" }} /><span className="font-mono text-sm">Music embeds</span></div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Track previews via the official <a href="https://developer.spotify.com/documentation/embeds" target="_blank" rel="noreferrer" className="hover:underline" style={{ color: "#1DB954" }}>Spotify Embed</a> (<code className="font-mono">open.spotify.com/embed/track/&lt;id&gt;</code>). All audio & artwork © respective rights holders.
+              </p>
+            </li>
+            <li className="rounded-xl border border-border/60 bg-secondary/30 p-3">
+              <div className="flex items-center gap-2"><Code2 className="h-3.5 w-3.5 text-primary" /><span className="font-mono text-sm">Typography</span></div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                <a href="https://fonts.google.com/specimen/Space+Grotesk" target="_blank" rel="noreferrer" className="text-primary hover:underline">Space Grotesk</a>,
+                <a href="https://fonts.google.com/specimen/Inter" target="_blank" rel="noreferrer" className="text-primary hover:underline"> Inter</a>, and
+                <a href="https://fonts.google.com/specimen/JetBrains+Mono" target="_blank" rel="noreferrer" className="text-primary hover:underline"> JetBrains Mono</a> via Google Fonts.
+              </p>
+            </li>
+            <li className="rounded-xl border border-border/60 bg-secondary/30 p-3">
+              <div className="flex items-center gap-2"><Database className="h-3.5 w-3.5 text-primary" /><span className="font-mono text-sm">Design & content</span></div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Layout, copy, and bento composition designed and written by <span className="text-foreground">Shahan Madhushanka</span>. Photo © Shahan Madhushanka.
+              </p>
+            </li>
+          </ul>
         </div>
       </section>
 
