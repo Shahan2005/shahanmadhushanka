@@ -132,6 +132,133 @@ const topTracks = [
   { id: "6habFhsOp2NvshLv26DqMb", title: "Despacito", artist: "Luis Fonsi" },
 ];
 
+// Technologies grouped by category
+const techCategories = [
+  {
+    title: "Frontend",
+    color: "#3B82F6",
+    icon: Code2,
+    iconSource: "lucide.dev (lucide-react)",
+    items: ["React 19", "TypeScript", "Tailwind CSS v4", "TanStack Router", "Vite 7", "shadcn/ui", "Radix UI", "Framer-style CSS"],
+  },
+  {
+    title: "DevOps",
+    color: "#22C55E",
+    icon: Workflow,
+    iconSource: "lucide.dev + simpleicons.org references",
+    items: ["Docker", "Kubernetes", "GitHub Actions", "Jenkins", "ArgoCD", "Helm", "Bash"],
+  },
+  {
+    title: "Cloud",
+    color: "#FF9900",
+    icon: Cloud,
+    iconSource: "lucide.dev + AWS Architecture Icons",
+    items: ["AWS EC2", "AWS S3", "AWS IAM", "AWS Lambda", "CloudFront", "Route 53", "Terraform"],
+  },
+  {
+    title: "Tooling",
+    color: "#A78BFA",
+    icon: Wrench,
+    iconSource: "lucide.dev (lucide-react)",
+    items: ["Git", "GitHub", "Linux", "VS Code", "Postman", "Prometheus", "Grafana"],
+  },
+];
+
+const contactSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(80, "Too long"),
+  email: z.string().trim().email("Enter a valid email").max(200),
+  message: z.string().trim().min(10, "Message must be at least 10 characters").max(1000, "Keep it under 1000 characters"),
+});
+
+function ContactForm() {
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsed = contactSchema.safeParse(form);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const key = String(issue.path[0] ?? "form");
+        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+      }
+      setErrors(fieldErrors);
+      toast.error("Please fix the highlighted fields");
+      return;
+    }
+    setErrors({});
+    setSubmitting(true);
+    // mailto fallback — opens user's email client with pre-filled body
+    const subject = encodeURIComponent(`Portfolio contact from ${parsed.data.name}`);
+    const body = encodeURIComponent(`${parsed.data.message}\n\n— ${parsed.data.name} (${parsed.data.email})`);
+    window.location.href = `mailto:shahanmadushanka246@gmail.com?subject=${subject}&body=${body}`;
+    setTimeout(() => {
+      toast.success("Message ready to send!", {
+        description: "Your email client should be opening. If not, use the WhatsApp or email button.",
+      });
+      setForm({ name: "", email: "", message: "" });
+      setSubmitting(false);
+    }, 400);
+  };
+
+  const field = "w-full rounded-xl border bg-secondary/40 px-3 py-2 text-sm outline-none transition-colors focus:border-primary";
+  return (
+    <form onSubmit={onSubmit} className="mt-6 space-y-3" noValidate>
+      <div>
+        <label htmlFor="cf-name" className="font-mono text-[11px] text-muted-foreground">Name</label>
+        <input
+          id="cf-name"
+          type="text"
+          maxLength={80}
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className={`${field} ${errors.name ? "border-destructive" : "border-border/60"}`}
+          placeholder="Your name"
+        />
+        {errors.name && <p className="mt-1 text-[11px] text-destructive">{errors.name}</p>}
+      </div>
+      <div>
+        <label htmlFor="cf-email" className="font-mono text-[11px] text-muted-foreground">Email</label>
+        <input
+          id="cf-email"
+          type="email"
+          maxLength={200}
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          className={`${field} ${errors.email ? "border-destructive" : "border-border/60"}`}
+          placeholder="you@example.com"
+        />
+        {errors.email && <p className="mt-1 text-[11px] text-destructive">{errors.email}</p>}
+      </div>
+      <div>
+        <label htmlFor="cf-msg" className="font-mono text-[11px] text-muted-foreground">Message</label>
+        <textarea
+          id="cf-msg"
+          rows={4}
+          maxLength={1000}
+          value={form.message}
+          onChange={(e) => setForm({ ...form, message: e.target.value })}
+          className={`${field} resize-none ${errors.message ? "border-destructive" : "border-border/60"}`}
+          placeholder="Tell me about your project, idea, or just say hi."
+        />
+        {errors.message && <p className="mt-1 text-[11px] text-destructive">{errors.message}</p>}
+      </div>
+      <button
+        type="submit"
+        disabled={submitting}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:shadow-[var(--glow-primary)] disabled:opacity-60"
+      >
+        <Send className="h-4 w-4" /> {submitting ? "Opening mail…" : "Send message"}
+      </button>
+      <p className="text-center font-mono text-[10px] text-muted-foreground">
+        Uses your default email app · no data is stored
+      </p>
+    </form>
+  );
+}
+
 function Nav() {
   const links = [
     { label: "About", href: "#about" },
