@@ -485,6 +485,52 @@ function Index() {
             <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Top 10 viral on Spotify</h2>
             <p className="mt-2 text-sm text-muted-foreground">Hit play on any track — full previews powered by Spotify.</p>
           </div>
+          <a
+            href={SPOTIFY_PLAYLIST_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium transition-colors hover:bg-secondary"
+            style={{ borderColor: "#1DB95466", color: "#1DB954" }}
+          >
+            <ExternalLink className="h-3.5 w-3.5" /> Play on Spotify
+          </a>
+        </div>
+
+        {/* Full playlist embed — fallback link rendered if iframe blocked */}
+        <div className="bento p-3 mb-4" style={{ borderColor: "#1DB95466" }}>
+          <div className="mb-2 flex items-center justify-between px-1">
+            <span className="font-mono text-xs flex items-center gap-2" style={{ color: "#1DB954" }}>
+              <ListMusic className="h-3.5 w-3.5" /> Global Top 50 — full playlist
+            </span>
+            <a
+              href={SPOTIFY_PLAYLIST_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono text-[10px] text-muted-foreground hover:text-foreground"
+            >
+              open.spotify.com ↗
+            </a>
+          </div>
+          <iframe
+            title="Spotify Global Top 50 playlist"
+            src={`https://open.spotify.com/embed/playlist/${SPOTIFY_PLAYLIST_ID}?utm_source=generator&theme=0`}
+            width="100%"
+            height="352"
+            loading="lazy"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            style={{ border: 0, borderRadius: 12 }}
+          />
+          <noscript>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Playlist embed needs JavaScript.{" "}
+              <a href={SPOTIFY_PLAYLIST_URL} className="underline" style={{ color: "#1DB954" }}>
+                Open this playlist on Spotify
+              </a>.
+            </p>
+          </noscript>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Embed not loading? <a href={SPOTIFY_PLAYLIST_URL} target="_blank" rel="noreferrer" className="underline hover:text-foreground" style={{ color: "#1DB954" }}>Open it on Spotify</a> — works on every browser.
+          </p>
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {topTracks.map((t, i) => (
