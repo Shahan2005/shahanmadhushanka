@@ -329,6 +329,9 @@ function Index() {
               <a href="#projects" className="group inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:shadow-[var(--glow-primary)]">
                 Explore work <ArrowUpRight className="h-4 w-4 transition-transform group-hover:rotate-45" />
               </a>
+              <a href={RESUME_URL} download className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-5 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20">
+                <Download className="h-4 w-4" /> Download resume
+              </a>
               <a href="#contact" className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-secondary">
                 Get in touch
               </a>
