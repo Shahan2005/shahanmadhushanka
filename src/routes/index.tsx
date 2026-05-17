@@ -537,7 +537,15 @@ function Index() {
             <div key={t.id} className="bento p-3" style={{ borderColor: "#1DB95444" }}>
               <div className="mb-2 flex items-center justify-between px-1">
                 <span className="font-mono text-xs text-muted-foreground">#{(i + 1).toString().padStart(2, "0")} · {t.title}</span>
-                <span className="font-mono text-[10px] text-muted-foreground">{t.artist}</span>
+                <a
+                  href={`https://open.spotify.com/track/${t.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-[10px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                  title="Play on Spotify"
+                >
+                  {t.artist} <ExternalLink className="h-3 w-3" />
+                </a>
               </div>
               <iframe
                 title={t.title}
@@ -548,6 +556,14 @@ function Index() {
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 style={{ border: 0, borderRadius: 12 }}
               />
+              <a
+                href={`https://open.spotify.com/track/${t.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-1 block text-center font-mono text-[10px] text-muted-foreground hover:text-foreground"
+              >
+                Can't play here? Open on Spotify ↗
+              </a>
             </div>
           ))}
         </div>
