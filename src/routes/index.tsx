@@ -1,13 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
 import {
   ArrowUpRight, Cloud, Container, GitBranch, Github, Mail, MapPin,
   Server, Sparkles, Terminal, Workflow, Zap, Cpu, Layers,
   MessageCircle, Instagram, Linkedin, BookOpen, MessagesSquare,
   AtSign, GraduationCap, Music2, Phone, Heart, Palette, Check,
   Rocket, Target, Code2, Package, Shield, Database, Network, Wrench,
+  Download, ListMusic, Send, ExternalLink,
 } from "lucide-react";
 import shahanPhoto from "@/assets/shahan.jpg";
+
+const RESUME_URL = "/shahan-madhushanka-resume.pdf";
+const SPOTIFY_PLAYLIST_ID = "37i9dQZEVXbMDoHDwVN2tF"; // Global Top 50
+const SPOTIFY_PLAYLIST_URL = `https://open.spotify.com/playlist/${SPOTIFY_PLAYLIST_ID}`;
 
 export const Route = createFileRoute("/")({
   component: Index,
