@@ -679,6 +679,46 @@ function Index() {
         </div>
       </section>
 
+      {/* TECH CATEGORIES — Frontend / DevOps / Cloud / Tooling */}
+      <section id="tech" className="mt-5">
+        <div className="mb-4">
+          <span className="chip" style={{ color: "#A78BFA", borderColor: "#A78BFA55" }}><Package className="h-3 w-3" /> 08 — Technologies used</span>
+          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">The full toolbelt</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Grouped by where they live in the stack. Icons from open-source sets — sourced per category.</p>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {techCategories.map(({ title, color, icon: Ic, items, iconSource }) => (
+            <div key={title} className="bento" style={{ borderColor: `${color}55` }}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-xl border p-2.5" style={{ borderColor: `${color}66`, background: `${color}15`, color }}>
+                    <Ic className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-lg font-semibold">{title}</h3>
+                    <div className="font-mono text-[10px] text-muted-foreground">{items.length} items</div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {items.map((it) => (
+                  <span
+                    key={it}
+                    className="chip"
+                    style={{ color, borderColor: `${color}55`, background: `${color}10` }}
+                  >
+                    {it}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-4 border-t border-border/60 pt-3 font-mono text-[10px] text-muted-foreground">
+                Icons: {iconSource}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* TECHNOLOGIES & CREDITS */}
       <section id="credits" className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-6 md:gap-5">
         <div className="bento md:col-span-3">
