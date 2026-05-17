@@ -649,10 +649,15 @@ function Index() {
             <a href="mailto:shahanmadushanka246@gmail.com" className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:shadow-[var(--glow-primary)]">
               <Mail className="h-4 w-4" /> Email me
             </a>
+            <a href={RESUME_URL} download className="inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition-colors hover:bg-primary/10" style={{ borderColor: "var(--primary)", color: "var(--primary)" }}>
+              <Download className="h-4 w-4" /> Download resume (PDF)
+            </a>
             <a href="https://wa.me/94740759769" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium" style={{ borderColor: "#25D36655", color: "#25D366" }}>
               <Phone className="h-4 w-4" /> WhatsApp
             </a>
           </div>
+
+          <ContactForm />
         </div>
         <div className="md:col-span-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {socials.map(({ name, handle, url, icon: Icon, color }) => (
