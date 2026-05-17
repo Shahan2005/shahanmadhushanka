@@ -1,13 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
 import {
   ArrowUpRight, Cloud, Container, GitBranch, Github, Mail, MapPin,
   Server, Sparkles, Terminal, Workflow, Zap, Cpu, Layers,
   MessageCircle, Instagram, Linkedin, BookOpen, MessagesSquare,
   AtSign, GraduationCap, Music2, Phone, Heart, Palette, Check,
   Rocket, Target, Code2, Package, Shield, Database, Network, Wrench,
+  Download, ListMusic, Send, ExternalLink,
 } from "lucide-react";
 import shahanPhoto from "@/assets/shahan.jpg";
+
+const RESUME_URL = "/shahan-madhushanka-resume.pdf";
+const SPOTIFY_PLAYLIST_ID = "37i9dQZEVXbMDoHDwVN2tF"; // Global Top 50
+const SPOTIFY_PLAYLIST_URL = `https://open.spotify.com/playlist/${SPOTIFY_PLAYLIST_ID}`;
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -125,6 +132,133 @@ const topTracks = [
   { id: "6habFhsOp2NvshLv26DqMb", title: "Despacito", artist: "Luis Fonsi" },
 ];
 
+// Technologies grouped by category
+const techCategories = [
+  {
+    title: "Frontend",
+    color: "#3B82F6",
+    icon: Code2,
+    iconSource: "lucide.dev (lucide-react)",
+    items: ["React 19", "TypeScript", "Tailwind CSS v4", "TanStack Router", "Vite 7", "shadcn/ui", "Radix UI", "Framer-style CSS"],
+  },
+  {
+    title: "DevOps",
+    color: "#22C55E",
+    icon: Workflow,
+    iconSource: "lucide.dev + simpleicons.org references",
+    items: ["Docker", "Kubernetes", "GitHub Actions", "Jenkins", "ArgoCD", "Helm", "Bash"],
+  },
+  {
+    title: "Cloud",
+    color: "#FF9900",
+    icon: Cloud,
+    iconSource: "lucide.dev + AWS Architecture Icons",
+    items: ["AWS EC2", "AWS S3", "AWS IAM", "AWS Lambda", "CloudFront", "Route 53", "Terraform"],
+  },
+  {
+    title: "Tooling",
+    color: "#A78BFA",
+    icon: Wrench,
+    iconSource: "lucide.dev (lucide-react)",
+    items: ["Git", "GitHub", "Linux", "VS Code", "Postman", "Prometheus", "Grafana"],
+  },
+];
+
+const contactSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(80, "Too long"),
+  email: z.string().trim().email("Enter a valid email").max(200),
+  message: z.string().trim().min(10, "Message must be at least 10 characters").max(1000, "Keep it under 1000 characters"),
+});
+
+function ContactForm() {
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsed = contactSchema.safeParse(form);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const key = String(issue.path[0] ?? "form");
+        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+      }
+      setErrors(fieldErrors);
+      toast.error("Please fix the highlighted fields");
+      return;
+    }
+    setErrors({});
+    setSubmitting(true);
+    // mailto fallback — opens user's email client with pre-filled body
+    const subject = encodeURIComponent(`Portfolio contact from ${parsed.data.name}`);
+    const body = encodeURIComponent(`${parsed.data.message}\n\n— ${parsed.data.name} (${parsed.data.email})`);
+    window.location.href = `mailto:shahanmadushanka246@gmail.com?subject=${subject}&body=${body}`;
+    setTimeout(() => {
+      toast.success("Message ready to send!", {
+        description: "Your email client should be opening. If not, use the WhatsApp or email button.",
+      });
+      setForm({ name: "", email: "", message: "" });
+      setSubmitting(false);
+    }, 400);
+  };
+
+  const field = "w-full rounded-xl border bg-secondary/40 px-3 py-2 text-sm outline-none transition-colors focus:border-primary";
+  return (
+    <form onSubmit={onSubmit} className="mt-6 space-y-3" noValidate>
+      <div>
+        <label htmlFor="cf-name" className="font-mono text-[11px] text-muted-foreground">Name</label>
+        <input
+          id="cf-name"
+          type="text"
+          maxLength={80}
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className={`${field} ${errors.name ? "border-destructive" : "border-border/60"}`}
+          placeholder="Your name"
+        />
+        {errors.name && <p className="mt-1 text-[11px] text-destructive">{errors.name}</p>}
+      </div>
+      <div>
+        <label htmlFor="cf-email" className="font-mono text-[11px] text-muted-foreground">Email</label>
+        <input
+          id="cf-email"
+          type="email"
+          maxLength={200}
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          className={`${field} ${errors.email ? "border-destructive" : "border-border/60"}`}
+          placeholder="you@example.com"
+        />
+        {errors.email && <p className="mt-1 text-[11px] text-destructive">{errors.email}</p>}
+      </div>
+      <div>
+        <label htmlFor="cf-msg" className="font-mono text-[11px] text-muted-foreground">Message</label>
+        <textarea
+          id="cf-msg"
+          rows={4}
+          maxLength={1000}
+          value={form.message}
+          onChange={(e) => setForm({ ...form, message: e.target.value })}
+          className={`${field} resize-none ${errors.message ? "border-destructive" : "border-border/60"}`}
+          placeholder="Tell me about your project, idea, or just say hi."
+        />
+        {errors.message && <p className="mt-1 text-[11px] text-destructive">{errors.message}</p>}
+      </div>
+      <button
+        type="submit"
+        disabled={submitting}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:shadow-[var(--glow-primary)] disabled:opacity-60"
+      >
+        <Send className="h-4 w-4" /> {submitting ? "Opening mail…" : "Send message"}
+      </button>
+      <p className="text-center font-mono text-[10px] text-muted-foreground">
+        Uses your default email app · no data is stored
+      </p>
+    </form>
+  );
+}
+
 function Nav() {
   const links = [
     { label: "About", href: "#about" },
@@ -194,6 +328,9 @@ function Index() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <a href="#projects" className="group inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:shadow-[var(--glow-primary)]">
                 Explore work <ArrowUpRight className="h-4 w-4 transition-transform group-hover:rotate-45" />
+              </a>
+              <a href={RESUME_URL} download className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-5 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20">
+                <Download className="h-4 w-4" /> Download resume
               </a>
               <a href="#contact" className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-secondary">
                 Get in touch
@@ -348,13 +485,67 @@ function Index() {
             <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">Top 10 viral on Spotify</h2>
             <p className="mt-2 text-sm text-muted-foreground">Hit play on any track — full previews powered by Spotify.</p>
           </div>
+          <a
+            href={SPOTIFY_PLAYLIST_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium transition-colors hover:bg-secondary"
+            style={{ borderColor: "#1DB95466", color: "#1DB954" }}
+          >
+            <ExternalLink className="h-3.5 w-3.5" /> Play on Spotify
+          </a>
+        </div>
+
+        {/* Full playlist embed — fallback link rendered if iframe blocked */}
+        <div className="bento p-3 mb-4" style={{ borderColor: "#1DB95466" }}>
+          <div className="mb-2 flex items-center justify-between px-1">
+            <span className="font-mono text-xs flex items-center gap-2" style={{ color: "#1DB954" }}>
+              <ListMusic className="h-3.5 w-3.5" /> Global Top 50 — full playlist
+            </span>
+            <a
+              href={SPOTIFY_PLAYLIST_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono text-[10px] text-muted-foreground hover:text-foreground"
+            >
+              open.spotify.com ↗
+            </a>
+          </div>
+          <iframe
+            title="Spotify Global Top 50 playlist"
+            src={`https://open.spotify.com/embed/playlist/${SPOTIFY_PLAYLIST_ID}?utm_source=generator&theme=0`}
+            width="100%"
+            height="352"
+            loading="lazy"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            style={{ border: 0, borderRadius: 12 }}
+          />
+          <noscript>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Playlist embed needs JavaScript.{" "}
+              <a href={SPOTIFY_PLAYLIST_URL} className="underline" style={{ color: "#1DB954" }}>
+                Open this playlist on Spotify
+              </a>.
+            </p>
+          </noscript>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Embed not loading? <a href={SPOTIFY_PLAYLIST_URL} target="_blank" rel="noreferrer" className="underline hover:text-foreground" style={{ color: "#1DB954" }}>Open it on Spotify</a> — works on every browser.
+          </p>
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {topTracks.map((t, i) => (
             <div key={t.id} className="bento p-3" style={{ borderColor: "#1DB95444" }}>
               <div className="mb-2 flex items-center justify-between px-1">
                 <span className="font-mono text-xs text-muted-foreground">#{(i + 1).toString().padStart(2, "0")} · {t.title}</span>
-                <span className="font-mono text-[10px] text-muted-foreground">{t.artist}</span>
+                <a
+                  href={`https://open.spotify.com/track/${t.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mono text-[10px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                  title="Play on Spotify"
+                >
+                  {t.artist} <ExternalLink className="h-3 w-3" />
+                </a>
               </div>
               <iframe
                 title={t.title}
@@ -365,6 +556,14 @@ function Index() {
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 style={{ border: 0, borderRadius: 12 }}
               />
+              <a
+                href={`https://open.spotify.com/track/${t.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-1 block text-center font-mono text-[10px] text-muted-foreground hover:text-foreground"
+              >
+                Can't play here? Open on Spotify ↗
+              </a>
             </div>
           ))}
         </div>
@@ -450,10 +649,15 @@ function Index() {
             <a href="mailto:shahanmadushanka246@gmail.com" className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:shadow-[var(--glow-primary)]">
               <Mail className="h-4 w-4" /> Email me
             </a>
+            <a href={RESUME_URL} download className="inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition-colors hover:bg-primary/10" style={{ borderColor: "var(--primary)", color: "var(--primary)" }}>
+              <Download className="h-4 w-4" /> Download resume (PDF)
+            </a>
             <a href="https://wa.me/94740759769" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium" style={{ borderColor: "#25D36655", color: "#25D366" }}>
               <Phone className="h-4 w-4" /> WhatsApp
             </a>
           </div>
+
+          <ContactForm />
         </div>
         <div className="md:col-span-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {socials.map(({ name, handle, url, icon: Icon, color }) => (
@@ -471,6 +675,46 @@ function Index() {
               </div>
               <ArrowUpRight className="ml-auto h-4 w-4 text-muted-foreground transition-all group-hover:rotate-45" style={{ color }} />
             </a>
+          ))}
+        </div>
+      </section>
+
+      {/* TECH CATEGORIES — Frontend / DevOps / Cloud / Tooling */}
+      <section id="tech" className="mt-5">
+        <div className="mb-4">
+          <span className="chip" style={{ color: "#A78BFA", borderColor: "#A78BFA55" }}><Package className="h-3 w-3" /> 08 — Technologies used</span>
+          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">The full toolbelt</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Grouped by where they live in the stack. Icons from open-source sets — sourced per category.</p>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {techCategories.map(({ title, color, icon: Ic, items, iconSource }) => (
+            <div key={title} className="bento" style={{ borderColor: `${color}55` }}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-xl border p-2.5" style={{ borderColor: `${color}66`, background: `${color}15`, color }}>
+                    <Ic className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-lg font-semibold">{title}</h3>
+                    <div className="font-mono text-[10px] text-muted-foreground">{items.length} items</div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {items.map((it) => (
+                  <span
+                    key={it}
+                    className="chip"
+                    style={{ color, borderColor: `${color}55`, background: `${color}10` }}
+                  >
+                    {it}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-4 border-t border-border/60 pt-3 font-mono text-[10px] text-muted-foreground">
+                Icons: {iconSource}
+              </div>
+            </div>
           ))}
         </div>
       </section>
