@@ -15,6 +15,7 @@ import shahanPhoto from "@/assets/shahan.jpg";
 const RESUME_URL = "/shahan-madhushanka-resume.pdf";
 const SPOTIFY_PLAYLIST_ID = "37i9dQZEVXbMDoHDwVN2tF"; // Global Top 50
 const SPOTIFY_PLAYLIST_URL = `https://open.spotify.com/playlist/${SPOTIFY_PLAYLIST_ID}`;
+const INITIAL_TRACK_COUNT = 4;
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -76,6 +77,35 @@ function ThemePicker() {
         </div>
       )}
     </div>
+  );
+}
+
+function SpotifyEmbed({ title, src, height = 80 }: { title: string; src: string; height?: number }) {
+  const [enabled, setEnabled] = useState(false);
+
+  return enabled ? (
+    <iframe
+      title={title}
+      src={src}
+      width="100%"
+      height={height}
+      loading="lazy"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      style={{ border: 0, borderRadius: 12 }}
+    />
+  ) : (
+    <button
+      type="button"
+      onClick={() => setEnabled(true)}
+      className="flex w-full items-center justify-between rounded-xl border border-border/60 bg-secondary/40 px-4 py-3 text-left text-sm transition-colors hover:bg-secondary"
+      aria-label={`Load ${title} Spotify player`}
+    >
+      <span>
+        <span className="block font-medium text-foreground">Load Spotify player</span>
+        <span className="mt-1 block text-xs text-muted-foreground">Opens the embedded player only when needed for faster page load.</span>
+      </span>
+      <ExternalLink className="h-4 w-4 text-primary" />
+    </button>
   );
 }
 
@@ -299,6 +329,9 @@ function Stat({ value, label }: { value: string; label: string }) {
 }
 
 function Index() {
+  const [showAllTracks, setShowAllTracks] = useState(false);
+  const visibleTracks = showAllTracks ? topTracks : topTracks.slice(0, INITIAL_TRACK_COUNT);
+
   return (
     <main id="top" className="relative mx-auto max-w-7xl px-4 pt-28 pb-20 sm:px-6 lg:px-8">
       <Nav />
@@ -511,14 +544,10 @@ function Index() {
               open.spotify.com ↗
             </a>
           </div>
-          <iframe
+          <SpotifyEmbed
             title="Spotify Global Top 50 playlist"
             src={`https://open.spotify.com/embed/playlist/${SPOTIFY_PLAYLIST_ID}?utm_source=generator&theme=0`}
-            width="100%"
-            height="352"
-            loading="lazy"
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            style={{ border: 0, borderRadius: 12 }}
+            height={352}
           />
           <noscript>
             <p className="mt-2 text-xs text-muted-foreground">
@@ -533,7 +562,7 @@ function Index() {
           </p>
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {topTracks.map((t, i) => (
+          {visibleTracks.map((t, i) => (
             <div key={t.id} className="bento p-3" style={{ borderColor: "#1DB95444" }}>
               <div className="mb-2 flex items-center justify-between px-1">
                 <span className="font-mono text-xs text-muted-foreground">#{(i + 1).toString().padStart(2, "0")} · {t.title}</span>
@@ -547,14 +576,9 @@ function Index() {
                   {t.artist} <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
-              <iframe
+              <SpotifyEmbed
                 title={t.title}
                 src={`https://open.spotify.com/embed/track/${t.id}?utm_source=generator&theme=0`}
-                width="100%"
-                height="80"
-                loading="lazy"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                style={{ border: 0, borderRadius: 12 }}
               />
               <a
                 href={`https://open.spotify.com/track/${t.id}`}
@@ -567,6 +591,17 @@ function Index() {
             </div>
           ))}
         </div>
+        {topTracks.length > INITIAL_TRACK_COUNT && (
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAllTracks((value) => !value)}
+              className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/50 px-4 py-2 text-sm font-medium transition-colors hover:bg-secondary"
+            >
+              {showAllTracks ? "Show fewer tracks" : `Show all ${topTracks.length} tracks`}
+            </button>
+          </div>
+        )}
       </section>
 
       {/* FUTURE GOAL + CLOUD ENGINEER ROADMAP */}
